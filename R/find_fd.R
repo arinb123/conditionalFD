@@ -20,18 +20,22 @@
 #'
 #' find_fd(dag1, "X", "Y")
 #'
+#' dag2 <- dagitty("dag {
+#' A -> B
+#' B -> C
+#' U1 -> A
+#' U1 -> B
+#' U2 -> B
+#' U2 -> C
+#' U1 [pos=\"0,1\"]
+#'   A  [pos=\"0,0\"]
+#'   B  [pos=\"1,0.5\"]
+#'   C  [pos=\"2,0\"]
+#'   U2 [pos=\"2,1\"]
+#' }")
 #'
-#' Candidate nodes: M
-#' Candidate sets:
-#'  {M}
-#' Intercept OK: {M}
-#' ---- Adjustment A (block X <-> Z) ----
-#'   {M}: found 1 W set(s). Example: {}
-#' ---- Adjustment B (block Z <-> Y given X) ----
-#'   {M}: 1 T set(s). Example: {}
-#' ==== Final front-door solutions ====
-#'   Front-door Adjustment A (X-Z) Adjustment B (Z-Y)
-#' {M}                 {}                 {}
+#' find_fd(dag2, "A", "C", verbose=FALSE, adj_type="canonical")
+
 
 
 find_fd <- function(dag, X, Y, verbose=TRUE, adj_type="minimal") {
