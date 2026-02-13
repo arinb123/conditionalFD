@@ -19,19 +19,7 @@
 #' }")
 #'
 #' find_fd(dag1, "X", "Y")
-#'
-#'
-#' Candidate nodes: M
-#' Candidate sets:
-#'  {M}
-#' Intercept OK: {M}
-#' ---- Adjustment A (block X <-> Z) ----
-#'   {M}: found 1 W set(s). Example: {}
-#' ---- Adjustment B (block Z <-> Y given X) ----
-#'   {M}: 1 T set(s). Example: {}
-#' ==== Final front-door solutions ====
-#'   Front-door Adjustment A (X-Z) Adjustment B (Z-Y)
-#' {M}                 {}                 {}
+
 
 
 find_fd <- function(dag, X, Y, verbose=TRUE, adj_type="minimal") {
