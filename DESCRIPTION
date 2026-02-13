@@ -2,9 +2,9 @@ Package: conditionalFD
 Title: Identifies Conditional Front Doors and Adjustment Sets
 Version: 0.0.0.9000
 Authors@R: 
-    person("Felix", "Thoemmes", , "fjt36@cornell.edu", role = c("aut"))
-    person("Arin", "Barde", , "asb385@cornell.edu", role = c("aut", "cre"))
-    person("Jiwoo", "Kim", , "jk2759@cornell.edu", role = c("aut"))
+    c(person("Felix", "Thoemmes", , "fjt36@cornell.edu", role = c("aut")),
+    person("Arin", "Barde", , "asb385@cornell.edu", role = c("aut", "cre")),
+    person("Jiwoo", "Kim", , "jk2759@cornell.edu", role = c("aut")))
 Description: Puts into code an algorithm based on Pearl (2009) in Acyclic Directed Mixed Graphs (ADMGs). In this package, ADMGs and DAGs are referred to interchangeably. 
 License: GPL (>= 3)
 Encoding: UTF-8
