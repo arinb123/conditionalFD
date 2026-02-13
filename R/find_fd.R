@@ -1,3 +1,36 @@
+#' Find conditional FDs in an ADMG/DAG
+#'
+#' @param dag ADMG (in daggity) on which FDs should be found
+#' @param X Exposure (String)
+#' @param Y Outcome (String)
+#' @param verbose Whether to print more detailed output (boolean)
+#' @param adj_type Type of adjustment sets to be returned ("minimal"/"canonical"/"all")
+#'
+#' @returns void, printed output
+#' @export
+#'
+#' @examples
+#' dag1 <- dagitty("dag {
+#' X -> M
+#' M -> Y
+#' X [pos=\"0,0\"]
+#'   M [pos=\"1,0\"]
+#'   Y [pos=\"2,0\"]
+#' }")
+#' find_fd(dag1, "X", "Y")
+#' Candidate nodes: M
+#' Candidate sets:
+#'  {M}
+#' Intercept OK: {M}
+#' ---- Adjustment A (block X <-> Z) ----
+#'   {M}: found 1 W set(s). Example: {}
+#' ---- Adjustment B (block Z <-> Y given X) ----
+#'   {M}: 1 T set(s). Example: {}
+#' ==== Final front-door solutions ====
+#'   Front-door Adjustment A (X-Z) Adjustment B (Z-Y)
+#' {M}                 {}                 {}
+
+
 find_fd <- function(dag, X, Y, verbose=TRUE, adj_type="minimal") {
   # 1. Setup candidate nodes (all nodes except X and Y)
   stopifnot(is.character(X), length(X) == 1L,
