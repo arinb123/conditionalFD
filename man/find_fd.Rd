@@ -7,40 +7,46 @@
 find_fd(dag, X, Y, verbose = TRUE, adj_type = "minimal")
 }
 \arguments{
-\item{dag}{ADMG (in daggity) on which FDs should be found}
+\item{dag}{ADMG (in dagitty) on which FDs should be found.}
 
-\item{X}{Exposure (String)}
+\item{X}{Exposure (String).}
 
-\item{Y}{Outcome (String)}
+\item{Y}{Outcome (String).}
 
-\item{verbose}{Whether to print more detailed output (boolean)}
+\item{verbose}{Whether to print more detailed output (boolean).}
 
-\item{adj_type}{Type of adjustment sets to be returned ("minimal"/"canonical"/"all")}
+\item{adj_type}{Type of adjustment sets to be returned ("minimal"/"canonical"/"all").}
 }
 \value{
-void, printed output
+Void; printed output.
 }
 \description{
 Find conditional FDs in an ADMG/DAG
 }
 \examples{
-dag1 <- dagitty("dag {
+dag1 <- dagitty::dagitty("dag {
 X -> M
 M -> Y
 X [pos=\"0,0\"]
   M [pos=\"1,0\"]
   Y [pos=\"2,0\"]
 }")
+
 find_fd(dag1, "X", "Y")
-Candidate nodes: M
-Candidate sets:
- {M}
-Intercept OK: {M}
----- Adjustment A (block X <-> Z) ----
-  {M}: found 1 W set(s). Example: {}
----- Adjustment B (block Z <-> Y given X) ----
-  {M}: 1 T set(s). Example: {}
-==== Final front-door solutions ====
-  Front-door Adjustment A (X-Z) Adjustment B (Z-Y)
-{M}                 {}                 {}
+
+dag2 <- dagitty::dagitty("dag {
+A -> B
+B -> C
+U1 -> A
+U1 -> B
+U2 -> B
+U2 -> C
+U1 [pos=\"0,1\"]
+  A  [pos=\"0,0\"]
+  B  [pos=\"1,0.5\"]
+  C  [pos=\"2,0\"]
+  U2 [pos=\"2,1\"]
+}")
+
+find_fd(dag2, "A", "C", verbose=FALSE, adj_type="canonical")
 }

@@ -1,11 +1,11 @@
 Package: conditionalFD
-Title: Identifies Conditional Front Doors and Adjustment Sets
+Title: Identification of Conditional Front Doors and Adjustment Sets
 Version: 0.0.0.9000
 Authors@R: 
     c(person("Felix", "Thoemmes", , "fjt36@cornell.edu", role = c("aut")),
     person("Arin", "Barde", , "asb385@cornell.edu", role = c("aut", "cre")),
     person("Jiwoo", "Kim", , "jk2759@cornell.edu", role = c("aut")))
-Description: Puts into code an algorithm based on Pearl (2009) in Acyclic Directed Mixed Graphs (ADMGs). In this package, ADMGs and DAGs are referred to interchangeably. 
+Description: Implements an algorithm based on Pearl (2009) for identifying conditional front-doors and covariate adjustment sets in acyclic directed mixed graphs (ADMGs). The package builds on functionality from the 'dagitty' package and provides utilities for enumerating and validating adjustment configurations. Citation: Pearl, J. (2009). Causality: Models, Reasoning, and Inference. Cambridge University Press.
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -13,4 +13,5 @@ RoxygenNote: 7.3.3
 URL: https://github.com/arinb123/conditionalFD
 BugReports: https://github.com/arinb123/conditionalFD/issues
 Imports: 
-    dagitty
+    dagitty,
+    utils

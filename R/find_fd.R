@@ -1,16 +1,18 @@
 #' Find conditional FDs in an ADMG/DAG
 #'
-#' @param dag ADMG (in daggity) on which FDs should be found.
+#' @param dag ADMG (in dagitty) on which FDs should be found.
 #' @param X Exposure (String).
 #' @param Y Outcome (String).
 #' @param verbose Whether to print more detailed output (boolean).
 #' @param adj_type Type of adjustment sets to be returned ("minimal"/"canonical"/"all").
 #'
 #' @returns Void; printed output.
+#' @importFrom dagitty dagitty adjustmentSets isAdjustmentSet children
+#' @importFrom utils combn
 #' @export
 #'
 #' @examples
-#' dag1 <- dagitty("dag {
+#' dag1 <- dagitty::dagitty("dag {
 #' X -> M
 #' M -> Y
 #' X [pos=\"0,0\"]
@@ -20,7 +22,7 @@
 #'
 #' find_fd(dag1, "X", "Y")
 #'
-#' dag2 <- dagitty("dag {
+#' dag2 <- dagitty::dagitty("dag {
 #' A -> B
 #' B -> C
 #' U1 -> A
@@ -58,7 +60,7 @@ find_fd <- function(dag, X, Y, verbose=TRUE, adj_type="minimal") {
   cand_sets <- subset_paths(paths, X, Y)
   message(cand_sets)
 
-  # ---- STEP 3A: Adjustment A for X->Z (use adjustmentSets) ----
+  # ---- STEP 2A: Adjustment A for X->Z (use adjustmentSets) ----
   Z_with_W <- list(); W_sets_all <- list()
   if (verbose) message("---- Adjustment A (block X <-> Z) ----")
   for (Z in cand_sets){
@@ -68,7 +70,7 @@ find_fd <- function(dag, X, Y, verbose=TRUE, adj_type="minimal") {
     Wsets  <- Filter(function(W) isAdjustmentSet(dag, W, exposure = X, outcome = Z), Wsets)
 
     if (!length(Wsets)){
-      if (verbose) message(fmt_set(Z), ": NO W found — drop this Z.")
+      if (verbose) message(fmt_set(Z), ": NO W found - drop this Z.")
     } else {
       if (verbose) message(fmt_set(Z), ": found ", length(Wsets), " W set(s). Example: ", fmt_set(Wsets[[1]]))
       Z_with_W[[length(Z_with_W)+1]] <- Z
@@ -80,7 +82,7 @@ find_fd <- function(dag, X, Y, verbose=TRUE, adj_type="minimal") {
     cat("No valid front-door\n"); return(invisible(NULL))
   }
 
-  # ---- STEP 3B: Adjustment B for Z->Y (must remain valid when X is added) ----
+  # ---- STEP 2B: Adjustment B for Z->Y (must remain valid when X is added) ----
   if (verbose) message("---- Adjustment B (block Z <-> Y given X) ----")
   rows <- list()
 
@@ -96,7 +98,7 @@ find_fd <- function(dag, X, Y, verbose=TRUE, adj_type="minimal") {
       Tsets <- list(character(0))  # meaning T = {}
     }
 
-    # Keep only those T for which {X} ∪ T is still a valid adjustment set
+    # Keep only those T for which {X} U T is still a valid adjustment set
     Tsets <- Filter(function(T) isAdjustmentSet(dag, c(X, T), exposure = Z, outcome = Y), Tsets)
 
     # If filtering removed all T but X alone works, record T = {}
@@ -106,7 +108,7 @@ find_fd <- function(dag, X, Y, verbose=TRUE, adj_type="minimal") {
 
     # If still nothing, drop this Z
     if (length(Tsets) == 0L){
-      if (verbose) message(fmt_set(Z), ": NO T found — drop this Z.")
+      if (verbose) message(fmt_set(Z), ": NO T found - drop this Z.")
       next
     }
 
@@ -126,7 +128,7 @@ find_fd <- function(dag, X, Y, verbose=TRUE, adj_type="minimal") {
     }
   }
 
-  # ---- STEP 4: final table (always print something) ----
+  # ---- STEP 3: final table (always print something) ----
   if (!length(rows)){
     cat("No valid front-door\n"); return(invisible(NULL))
   }
