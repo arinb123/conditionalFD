@@ -5,7 +5,7 @@ Authors@R:
     c(person("Felix", "Thoemmes", , "fjt36@cornell.edu", role = c("aut")),
     person("Arin", "Barde", , "asb385@cornell.edu", role = c("aut", "cre")),
     person("Jiwoo", "Kim", , "jk2759@cornell.edu", role = c("aut")))
-Description: Implements an algorithm based on Pearl (2009) for identifying conditional front-doors and covariate adjustment sets in directed acyclic graphs (DAGs). This package builds on functionality from the 'dagitty' package and provides utilities for enumerating and validating adjustment configurations.
+Description: Implements an algorithm based on Pearl (2009) for identifying conditional front-doors and covariate adjustment sets in directed acyclic graphs (DAGs). The package builds on functionality from the 'dagitty' package and provides utilities for enumerating and validating adjustment configurations.
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
