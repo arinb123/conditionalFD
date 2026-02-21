@@ -59,7 +59,7 @@ B
  Front-door Adjustment A (X-Z) Adjustment B (Z-Y)
         {B}            {U1,U2}          {A,U1,U2}
 ```
-Explanation: {B} is a valid front-door set, but identification requires conditioning on {U1, U2} (to block all backdoors on A ~> B) and {A, U1, U2} (to block backdoors on B ~> C conditional on A).
+Explanation: {B} is a valid front-door set, but identification requires conditioning. {U1, U2} blocks all backdoors on A ~> B and {A, U1, U2} blocks backdoors on B ~> C conditional on A. If we ran with adj_type="minimal", we would have smaller adjustment sets: namely, {U1} and {U2}, respectively.
 
 ## Citations ##
 Glynn, A. N., & Kashin, K. (2018). Front-door versus back-door adjustment with unmeasured confounding: Bias formulas for front-door and hybrid adjustments with application to a job training program. https://doi.org/10.1080/01621459.2017.1398657
