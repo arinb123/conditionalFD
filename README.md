@@ -1,15 +1,15 @@
 ## Summary ##
-conditionalFD is an R package to identify valid front-door sets and their corresponding adjustment sets in a directed acyclic graph (DAG).
-It operates on DAGs defined using dagitty, and takes in exposure/outcome node names as strings.
+conditionalFD is an R package to identify valid front-door sets and their associated adjustment sets in directed acyclic graphs (DAGs).
+Using DAGs defined via dagitty, the package enables researchers to specify exposure and outcome nodes and systematically search for front-door identification strategies.
 
 ## Why this package? ##
-- Direct integration with dagitty, as opposed to igraph or other DAG libraries.
 - Legible, explicit output: adjustment sets and mediators are printed in user-friendly format.
 - Supports different adjustment set formats.
 - Speed and accuracy as priorities.
+- Provides information on how identification works, rather than simply indicating whether a DAG is identifiable.
 
 
-### Example usage:
+## Example usage:
 
 #### INPUT:
 ```r
@@ -63,7 +63,7 @@ Explanation: {B} is a valid front-door set, but identification requires conditio
 
 ## Citations ##
 Glynn, A. N., & Kashin, K. (2018). Front-door versus back-door adjustment with unmeasured confounding: Bias formulas for front-door and hybrid adjustments with application to a job training program. https://doi.org/10.1080/01621459.2017.1398657
-Pearl, J. (2009) Causality: Models, Reasoning and Inference. 2nd Edition, Cambridge University Press, Cambridge. https://doi.org/10.1017/CBO9780511803161
-Textor, J., van der Zander, B., Gilthorpe, M. S., Liśkiewicz, M., & Ellison, G. T. H. (2016). Robust causal inference using directed acyclic graphs: the R package 'dagitty'. International Journal of Epidemiology, 45(6), 1887–1894. https://doi.org/10.1093/ije/dyw341
-Thoemmes, F., & Kim, Y. (2023). Bias and Sensitivity Analyses for Linear Front-Door Models. Methodology, 19(3), Article e9205. https://doi.org/10.5964/meth.9205
+Pearl, J. (2009) _Causality: Models, Reasoning and Inference_. 2nd Edition, Cambridge University Press, Cambridge. https://doi.org/10.1017/CBO9780511803161
+Textor, J., van der Zander, B., Gilthorpe, M. S., Liśkiewicz, M., & Ellison, G. T. H. (2016). Robust causal inference using directed acyclic graphs: the R package 'dagitty'. _International Journal of Epidemiology, 45_(6), 1887–1894. https://doi.org/10.1093/ije/dyw341
+Thoemmes, F., & Kim, Y. (2023). Bias and Sensitivity Analyses for Linear Front-Door Models. _Methodology, 19_(3), Article e9205. https://doi.org/10.5964/meth.9205
 
