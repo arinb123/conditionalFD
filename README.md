@@ -11,6 +11,24 @@ Using DAGs defined via dagitty, the package enables researchers to specify expos
 
 ## Example usage:
 
+find_fd takes in parameters:
+
+(required)
+- `dag` (dagitty object) : the graph in which to find mediators and adjustment sets
+- `X` (string) : the exposure node name
+- `Y` (string) : the outcome node name
+
+(optional)
+- `verbose=TRUE` (boolean) : whether to print more detailed output
+- `adj_type="minimal"` (string) : type of adjustment sets to find (see dagitty documentation for more)
+
+find_fd outputs:
+- printed information about mediators and adjustment sets
+- returns an S3 object with attributes (as lists of lists of strings)
+    - `adjustment_X_Y` : valid adjustment sets between the exposure and mediator(s)
+    - `adjustment_Y_Z` : valid adjustment sets between the mediator(s) and outcome
+    - `Z` : valid mediator nodes
+
 #### INPUT:
 ```r
 dag1 <- dagitty::dagitty("dag {
@@ -61,9 +79,17 @@ B
 ```
 Explanation: {B} is a valid front-door set, but identification requires conditioning. {U1, U2} blocks all backdoors on A ~> B and {A, U1, U2} blocks backdoors on B ~> C conditional on A. If we ran with adj_type="minimal", we would have smaller adjustment sets: namely, {U1} and {U2}, respectively.
 
-## Citations ##
-Glynn, A. N., & Kashin, K. (2018). Front-door versus back-door adjustment with unmeasured confounding: Bias formulas for front-door and hybrid adjustments with application to a job training program. https://doi.org/10.1080/01621459.2017.1398657
-Pearl, J. (2009) _Causality: Models, Reasoning and Inference_. 2nd Edition, Cambridge University Press, Cambridge. https://doi.org/10.1017/CBO9780511803161
-Textor, J., van der Zander, B., Gilthorpe, M. S., Liśkiewicz, M., & Ellison, G. T. H. (2016). Robust causal inference using directed acyclic graphs: the R package 'dagitty'. _International Journal of Epidemiology, 45_(6), 1887–1894. https://doi.org/10.1093/ije/dyw341
-Thoemmes, F., & Kim, Y. (2023). Bias and Sensitivity Analyses for Linear Front-Door Models. _Methodology, 19_(3), Article e9205. https://doi.org/10.5964/meth.9205
+## Citations
+
+Glynn, A. N., & Kashin, K. (2018). Front-door versus back-door adjustment with unmeasured confounding: Bias formulas for front-door and hybrid adjustments with application to a job training program.
+https://doi.org/10.1080/01621459.2017.1398657
+
+Pearl, J. (2009) _Causality: Models, Reasoning and Inference_. 2nd Edition, Cambridge University Press, Cambridge.
+https://doi.org/10.1017/CBO9780511803161
+
+Textor, J., van der Zander, B., Gilthorpe, M. S., Liśkiewicz, M., & Ellison, G. T. H. (2016). Robust causal inference using directed acyclic graphs: the R package 'dagitty'. _International Journal of Epidemiology, 45_(6), 1887–1894.
+https://doi.org/10.1093/ije/dyw341
+
+Thoemmes, F., & Kim, Y. (2023). Bias and Sensitivity Analyses for Linear Front-Door Models. _Methodology, 19_(3), Article e9205.
+https://doi.org/10.5964/meth.9205
 
