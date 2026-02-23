@@ -6,7 +6,7 @@
 #' @param verbose Whether to print more detailed output (boolean).
 #' @param adj_type Type of adjustment sets to be returned ("minimal"/"canonical"/"all").
 #'
-#' @returns Void; printed output.
+#' @returns S3 object of adjustment_X_Z (list of adjustment sets between X and Z), adjustment_Z_Y (list of adjustment sets between Z and Y), Z (list of front-door mediators)
 #' @importFrom dagitty dagitty adjustmentSets isAdjustmentSet children
 #' @importFrom utils combn
 #' @export
@@ -62,7 +62,7 @@ find_fd <- function(dag, X, Y, verbose=TRUE, adj_type="minimal") {
 
   # ---- STEP 2A: Adjustment A for X->Z (use adjustmentSets) ----
   Z_with_W <- list(); W_sets_all <- list()
-  if (verbose) message("---- Adjustment A (block X <-> Z) ----")
+  if (verbose) message("---- Exposure-Mediator Adjustment (block X <-> Z) ----")
   for (Z in cand_sets){
     W_raw  <- adjustmentSets(dag, exposure = X, outcome = Z, type = adj_type)
     Wsets  <- normalize_sets(W_raw)
@@ -78,13 +78,17 @@ find_fd <- function(dag, X, Y, verbose=TRUE, adj_type="minimal") {
     }
   }
   if (!length(Z_with_W)){
-    if (verbose) message("No Z passed Adjustment A.")
+    if (verbose) message("No Z passed Exposure-Mediator Adjustment.")
     cat("No valid front-door\n"); return(invisible(NULL))
   }
 
   # ---- STEP 2B: Adjustment B for Z->Y (must remain valid when X is added) ----
-  if (verbose) message("---- Adjustment B (block Z <-> Y given X) ----")
+  if (verbose) message("---- Mediator-Outcome Adjustment (block Z <-> Y given X) ----")
   rows <- list()
+
+  adjustment_X_Z <- list()
+  adjustment_Z_Y <- list()
+  Z_list <- list()
 
   for (i in seq_along(Z_with_W)){
     Z   <- Z_with_W[[i]]
@@ -118,12 +122,15 @@ find_fd <- function(dag, X, Y, verbose=TRUE, adj_type="minimal") {
     for (W in Ws){
       for (T in Tsets){
         rows[[length(rows)+1]] <- data.frame(
-          "Front-door"          = fmt_set(Z),
-          "Adjustment A (X-Z)"  = fmt_set(W),
-          "Adjustment B (Z-Y)"  = fmt_set(T),
+          "Front-door | "          = fmt_set(Z),
+          "Exposure-Mediator Adjustment | "  = fmt_set(W),
+          "Mediator-Outcome Adjustment"  = fmt_set(T),
           stringsAsFactors = FALSE,
           check.names      = FALSE
         )
+        Z_list[[length(Z_list)+1]]                 <- Z
+        adjustment_X_Z[[length(adjustment_X_Z)+1]] <- W
+        adjustment_Z_Y[[length(adjustment_Z_Y)+1]] <- T
       }
     }
   }
@@ -135,5 +142,14 @@ find_fd <- function(dag, X, Y, verbose=TRUE, adj_type="minimal") {
   out <- do.call(rbind, rows)
   cat("==== Final front-door solutions ====\n")
   print(out, row.names = FALSE)
-  invisible(out)
+
+  result <- structure(
+    list(
+      adjustment_X_Z = adjustment_X_Z,
+      adjustment_Z_Y = adjustment_Z_Y,
+      Z              = Z_list
+    ),
+    class = "front_door"
+  )
+  invisible(result)
 }
