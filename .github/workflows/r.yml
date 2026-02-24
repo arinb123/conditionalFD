@@ -37,7 +37,8 @@ jobs:
         
       - if: runner.os == 'Linux'
         run: |
-          sudo apt-get install xvfb xauth xfonts-base tcl8.6-dev tk8.6-dev
+          sudo apt-get update
+          sudo apt-get install --fix-missing -y xvfb xauth xfonts-base tcl8.6-dev tk8.6-dev
           export DISPLAY=:99.0
           Xvfb $DISPLAY -screen 0 1024x768x24 > /dev/null 2>&1 &
           
