@@ -6,7 +6,7 @@
 #' @param verbose Whether to print more detailed output (boolean).
 #' @param adj_type Type of adjustment sets to be returned ("minimal"/"canonical"/"all").
 #'
-#' @returns S3 object of adjustment_X_Z (list of adjustment sets between X and Z), adjustment_Z_Y (list of adjustment sets between Z and Y), Z (list of front-door mediators)
+#' @returns S3 object of adjustment_X_M (list of adjustment sets between X and M), adjustment_M_Y (list of adjustment sets between M and Y), M (list of front-door mediators)
 #' @importFrom dagitty dagitty adjustmentSets isAdjustmentSet children
 #' @importFrom utils combn
 #' @export
@@ -60,77 +60,77 @@ find_fd <- function(dag, X, Y, verbose=TRUE, adj_type="minimal") {
   cand_sets <- subset_paths(paths, X, Y)
   message(cand_sets)
 
-  # ---- STEP 2A: Adjustment A for X->Z (use adjustmentSets) ----
-  Z_with_W <- list(); W_sets_all <- list()
-  if (verbose) message("---- Exposure-Mediator Adjustment (block X <-> Z) ----")
-  for (Z in cand_sets){
-    W_raw  <- adjustmentSets(dag, exposure = X, outcome = Z, type = adj_type)
+  # ---- STEP 2A: Adjustment A for X->M (use adjustmentSets) ----
+  M_with_W <- list(); W_sets_all <- list()
+  if (verbose) message("---- Exposure-Mediator Adjustment (block X <-> M) ----")
+  for (M in cand_sets){
+    W_raw  <- adjustmentSets(dag, exposure = X, outcome = M, type = adj_type)
     Wsets  <- normalize_sets(W_raw)
 
-    Wsets  <- Filter(function(W) isAdjustmentSet(dag, W, exposure = X, outcome = Z), Wsets)
+    Wsets  <- Filter(function(W) isAdjustmentSet(dag, W, exposure = X, outcome = M), Wsets)
 
     if (!length(Wsets)){
-      if (verbose) message(fmt_set(Z), ": NO W found - drop this Z.")
+      if (verbose) message(fmt_set(M), ": NO W found - drop this M.")
     } else {
-      if (verbose) message(fmt_set(Z), ": found ", length(Wsets), " W set(s). Example: ", fmt_set(Wsets[[1]]))
-      Z_with_W[[length(Z_with_W)+1]] <- Z
+      if (verbose) message(fmt_set(M), ": found ", length(Wsets), " W set(s). Example: ", fmt_set(Wsets[[1]]))
+      M_with_W[[length(M_with_W)+1]] <- M
       W_sets_all[[length(W_sets_all)+1]] <- Wsets
     }
   }
-  if (!length(Z_with_W)){
-    if (verbose) message("No Z passed Exposure-Mediator Adjustment.")
+  if (!length(M_with_W)){
+    if (verbose) message("No M passed Exposure-Mediator Adjustment.")
     cat("No valid front-door\n"); return(invisible(NULL))
   }
 
-  # ---- STEP 2B: Adjustment B for Z->Y (must remain valid when X is added) ----
-  if (verbose) message("---- Mediator-Outcome Adjustment (block Z <-> Y given X) ----")
+  # ---- STEP 2B: Adjustment B for M->Y (must remain valid when X is added) ----
+  if (verbose) message("---- Mediator-Outcome Adjustment (block M <-> Y given X) ----")
   rows <- list()
 
-  adjustment_X_Z <- list()
-  adjustment_Z_Y <- list()
-  Z_list <- list()
+  adjustment_X_M <- list()
+  adjustment_M_Y <- list()
+  M_list <- list()
 
-  for (i in seq_along(Z_with_W)){
-    Z   <- Z_with_W[[i]]
+  for (i in seq_along(M_with_W)){
+    M   <- M_with_W[[i]]
     Ws  <- W_sets_all[[i]]
 
-    T_raw  <- adjustmentSets(dag, exposure = Z, outcome = Y, type = adj_type)
+    T_raw  <- adjustmentSets(dag, exposure = M, outcome = Y, type = adj_type)
     Tsets  <- normalize_sets(T_raw)
 
     # If no T proposed at all, accept {} iff X alone is a valid adjustment set:
-    if (length(Tsets) == 0L && isAdjustmentSet(dag, X, exposure = Z, outcome = Y)) {
+    if (length(Tsets) == 0L && isAdjustmentSet(dag, X, exposure = M, outcome = Y)) {
       Tsets <- list(character(0))  # meaning T = {}
     }
 
     # Keep only those T for which {X} U T is still a valid adjustment set
-    Tsets <- Filter(function(T) isAdjustmentSet(dag, c(X, T), exposure = Z, outcome = Y), Tsets)
+    Tsets <- Filter(function(T) isAdjustmentSet(dag, c(X, T), exposure = M, outcome = Y), Tsets)
 
     # If filtering removed all T but X alone works, record T = {}
-    if (length(Tsets) == 0L && isAdjustmentSet(dag, X, exposure = Z, outcome = Y)) {
+    if (length(Tsets) == 0L && isAdjustmentSet(dag, X, exposure = M, outcome = Y)) {
       Tsets <- list(character(0))
     }
 
-    # If still nothing, drop this Z
+    # If still nothing, drop this M
     if (length(Tsets) == 0L){
-      if (verbose) message(fmt_set(Z), ": NO T found - drop this Z.")
+      if (verbose) message(fmt_set(M), ": NO T found - drop this M.")
       next
     }
 
-    if (verbose) message(fmt_set(Z), ": ", length(Tsets), " T set(s). Example: ", fmt_set(Tsets[[1]]))
+    if (verbose) message(fmt_set(M), ": ", length(Tsets), " T set(s). Example: ", fmt_set(Tsets[[1]]))
 
-    # Cross product: list every (Z, W, T) combo
+    # Cross product: list every (M, W, T) combo
     for (W in Ws){
       for (T in Tsets){
         rows[[length(rows)+1]] <- data.frame(
-          "Front-door | "          = fmt_set(Z),
-          "Exposure-Mediator Adjustment | "  = fmt_set(W),
-          "Mediator-Outcome Adjustment"  = fmt_set(T),
+          "Front-door | "          = fmt_set(M),
+          "Adjustment I (block X <-> Z) | "  = fmt_set(W),
+          "Adjustment II (block Z <-> Y)"  = fmt_set(T),
           stringsAsFactors = FALSE,
           check.names      = FALSE
         )
-        Z_list[[length(Z_list)+1]]                 <- Z
-        adjustment_X_Z[[length(adjustment_X_Z)+1]] <- W
-        adjustment_Z_Y[[length(adjustment_Z_Y)+1]] <- T
+        M_list[[length(M_list)+1]]                 <- M
+        adjustment_X_M[[length(adjustment_X_M)+1]] <- W
+        adjustment_M_Y[[length(adjustment_M_Y)+1]] <- T
       }
     }
   }
@@ -145,9 +145,9 @@ find_fd <- function(dag, X, Y, verbose=TRUE, adj_type="minimal") {
 
   result <- structure(
     list(
-      adjustment_X_Z = adjustment_X_Z,
-      adjustment_Z_Y = adjustment_Z_Y,
-      Z              = Z_list
+      adjustment_X_M = adjustment_X_M,
+      adjustment_M_Y = adjustment_M_Y,
+      M              = M_list
     ),
     class = "front_door"
   )

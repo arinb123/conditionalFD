@@ -25,7 +25,7 @@ find_fd takes in parameters:
 find_fd outputs:
 - printed information about mediators and adjustment sets
 - returns an S3 object with attributes (as lists of lists of strings)
-    - `adjustment_X_Y` : valid adjustment sets between the exposure and mediator(s)
+    - `adjustment_X_Z` : valid adjustment sets between the exposure and mediator(s)
     - `adjustment_Y_Z` : valid adjustment sets between the mediator(s) and outcome
     - `Z` : valid mediator nodes
 
@@ -43,15 +43,15 @@ find_fd(dag1, "X", "Y")
 ```
 #### OUTPUT:
 ```
----- Adjustment A (block X <-> Z) ----
+---- Adjustment I (block X <-> Z) ----
 {M}: found 1 W set(s). Example: {}
----- Adjustment B (block Z <-> Y given X) ----
+---- Adjustment II (block Z <-> Y given X) ----
 {M}: 1 T set(s). Example: {}
 ==== Final front-door solutions ====
- Front-door Adjustment A (X-Z) Adjustment B (Z-Y)
+Front-door | Adjustment I (X-M) | Adjustment II (M-Y)
         {M}                 {}                 {}
 ```
-Explanation: M is a valid front-door between X and Y. There are no additional confounders to condition on for this FD to work.
+Explanation: M is a valid front-door between X and Y. There are no additional confounders to condition on for this front-door to work.
 #### INPUT:
 ```r
 dag2 <- dagitty::dagitty("dag {
@@ -73,9 +73,14 @@ find_fd(dag2, "A", "C", verbose=FALSE, adj_type="canonical")
 #### OUTPUT:
 ```
 B
+---- Exposure-Mediator Adjustment (block X <-> M) ----
+{B}: found 1 W set(s). Example: {U1,U2}
+---- Mediator-Outcome Adjustment (block M <-> Y given X) ----
+{B}: 1 T set(s). Example: {A,U1,U2}
 ==== Final front-door solutions ====
- Front-door Adjustment A (X-Z) Adjustment B (Z-Y)
-        {B}            {U1,U2}          {A,U1,U2}
+ Front-door |  Adjustment I (block X <-> Z) | Adjustment II (block Z <-> Y)
+          {B}                         {U1,U2}                     {A,U1,U2}
+                     
 ```
 Explanation: {B} is a valid front-door set, but identification requires conditioning. {U1, U2} blocks all backdoors on A ~> B and {A, U1, U2} blocks backdoors on B ~> C conditional on A. If we ran with adj_type="minimal", we would have smaller adjustment sets: namely, {U1} and {U2}, respectively.
 
