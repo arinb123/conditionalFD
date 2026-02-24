@@ -2,12 +2,12 @@
 % Please edit documentation in R/find_fd.R
 \name{find_fd}
 \alias{find_fd}
-\title{Find conditional FDs in an ADMG/DAG}
+\title{Find conditional FDs in a directed acyclic graph (DAG)}
 \usage{
 find_fd(dag, X, Y, verbose = TRUE, adj_type = "minimal")
 }
 \arguments{
-\item{dag}{ADMG (in dagitty) on which FDs should be found.}
+\item{dag}{DAG (in dagitty) on which FDs should be found.}
 
 \item{X}{Exposure (String).}
 
@@ -18,10 +18,10 @@ find_fd(dag, X, Y, verbose = TRUE, adj_type = "minimal")
 \item{adj_type}{Type of adjustment sets to be returned ("minimal"/"canonical"/"all").}
 }
 \value{
-Void; printed output.
+S3 object of adjustment_X_M (list of adjustment sets between X and M), adjustment_M_Y (list of adjustment sets between M and Y), M (list of front-door mediators)
 }
 \description{
-Find conditional FDs in an ADMG/DAG
+Find conditional FDs in a directed acyclic graph (DAG)
 }
 \examples{
 dag1 <- dagitty::dagitty("dag {

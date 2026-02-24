@@ -1,6 +1,6 @@
-#' Find conditional FDs in an ADMG/DAG
+#' Find conditional FDs in a directed acyclic graph (DAG)
 #'
-#' @param dag ADMG (in dagitty) on which FDs should be found.
+#' @param dag DAG (in dagitty) on which FDs should be found.
 #' @param X Exposure (String).
 #' @param Y Outcome (String).
 #' @param verbose Whether to print more detailed output (boolean).
