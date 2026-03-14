@@ -4,7 +4,7 @@ Using DAGs defined via dagitty, the package enables researchers to specify expos
 
 ## Why this package? ##
 - Legible, explicit output: adjustment sets and mediators are printed in user-friendly format.
-- Supports different adjustment set formats.
+- Supports different adjustment set formats and candidate constraints for practical research design.
 - Speed and accuracy as priorities.
 - Provides information on how identification works, rather than simply indicating whether a DAG is identifiable.
 
@@ -21,13 +21,15 @@ find_fd takes in parameters:
 (optional)
 - `verbose=TRUE` (boolean) : whether to print more detailed output
 - `adj_type="minimal"` (string) : type of adjustment sets to find (see dagitty documentation for more)
+- `I=character(0)` (vector) : a set of nodes the mediator must contain, defaulting to none
+- `R=NONE` (vector) : a constraint on possible nodes in the mediator set (if NONE, no constraint is imposed)
 
 find_fd outputs:
 - printed information about mediators and adjustment sets
 - returns an S3 object with attributes (as lists of lists of strings)
     - `adjustment_X_Z` : valid adjustment sets between the exposure and mediator(s)
     - `adjustment_Y_Z` : valid adjustment sets between the mediator(s) and outcome
-    - `Z` : valid mediator nodes
+    - `Z` : valid mediator nodes, where I is a subset of Z and Z is a subset of R
 
 #### INPUT:
 ```r
@@ -84,7 +86,42 @@ B
 ```
 Explanation: {B} is a valid front-door set, but identification requires conditioning. {U1, U2} blocks all backdoors on A ~> B and {A, U1, U2} blocks backdoors on B ~> C conditional on A. If we ran with adj_type="minimal", we would have smaller adjustment sets: namely, {U1} and {U2}, respectively.
 
+#### INPUT:
+```r
+dag3 <- dagitty::dagitty("dag {
+A -> B
+B -> C
+C -> D
+A <- U1 -> B
+C <- U2 -> D
+U1 [pos=\"0,1\"]
+  A  [pos=\"0,0\"]
+  B  [pos=\"1,0\"]
+  C  [pos=\"2,0\"]
+  D  [pos=\"3,0\"]
+  U2 [pos=\"3,1\"]
+}")
+find_fd(dag3, "A", "D", I=c("C"), R=c("B","C"))
+```
+#### OUTPUT:
+```
+---- Exposure-Mediator Adjustment (block X <-> M) ----
+{B,C}: found 1 W set(s). Example: {U1}
+---- Mediator-Outcome Adjustment (block M <-> Y given X) ----
+{B,C}: 1 T set(s). Example: {U2}
+==== Final front-door solutions ====
+ Front-door | Adjustment I (X-M) | Adjustment II (M-Y)
+      {B,C}               {U1}                {U2}
+```
+Explanation: Without constraints I and R, {B} would be a valid front door set. However, we've imposed that all the sets we find must include I={C}.
+
 ## Citations
+
+Bareinboim, E., Jeong, H., & Tian, J. (2022). Finding and listing front-door adjustment sets. Advances in Neural Information Processing Systems 35, 33173–33185. 
+https://doi.org/10.52202/068431-2404
+
+Cheng, D., Li, J., Liu, J., Liu, L., Yu, K., & Yu, Z. (2023). Causal Inference with Conditional Front-Door Adjustment and Identifiable Variational Autoencoder.
+https://doi.org/ https://doi.org/10.48550/arXiv.2310.01937 
 
 Glynn, A. N., & Kashin, K. (2018). Front-door versus back-door adjustment with unmeasured confounding: Bias formulas for front-door and hybrid adjustments with application to a job training program.
 https://doi.org/10.1080/01621459.2017.1398657
