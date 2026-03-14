@@ -5,6 +5,8 @@
 #' @param Y Outcome (String).
 #' @param verbose Whether to print more detailed output (boolean).
 #' @param adj_type Type of adjustment sets to be returned ("minimal"/"canonical"/"all").
+#' @param I set of nodes that must be in the mediator (vector)
+#' @param R set of nodes that the search is restrained to (vector)
 #'
 #' @returns S3 object of adjustment_X_M (list of adjustment sets between X and M), adjustment_M_Y (list of adjustment sets between M and Y), M (list of front-door mediators)
 #' @importFrom dagitty dagitty adjustmentSets isAdjustmentSet children

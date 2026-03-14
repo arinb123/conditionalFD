@@ -4,7 +4,15 @@
 \alias{find_fd}
 \title{Find conditional FDs in a directed acyclic graph (DAG)}
 \usage{
-find_fd(dag, X, Y, verbose = TRUE, adj_type = "minimal")
+find_fd(
+  dag,
+  X,
+  Y,
+  verbose = TRUE,
+  adj_type = "minimal",
+  I = character(0),
+  R = NULL
+)
 }
 \arguments{
 \item{dag}{DAG (in dagitty) on which FDs should be found.}
@@ -16,6 +24,10 @@ find_fd(dag, X, Y, verbose = TRUE, adj_type = "minimal")
 \item{verbose}{Whether to print more detailed output (boolean).}
 
 \item{adj_type}{Type of adjustment sets to be returned ("minimal"/"canonical"/"all").}
+
+\item{I}{set of nodes that must be in the mediator (vector)}
+
+\item{R}{set of nodes that the search is restrained to (vector)}
 }
 \value{
 S3 object of adjustment_X_M (list of adjustment sets between X and M), adjustment_M_Y (list of adjustment sets between M and Y), M (list of front-door mediators)
