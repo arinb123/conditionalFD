@@ -40,7 +40,7 @@
 
 
 
-find_fd <- function(dag, X, Y, verbose=TRUE, adj_type="minimal") {
+find_fd <- function(dag, X, Y, verbose=TRUE, adj_type="minimal", I=character(0), R=NULL) {
   # 1. Setup candidate nodes (all nodes except X and Y)
   stopifnot(is.character(X), length(X) == 1L,
             is.character(Y), length(Y) == 1L)
@@ -58,7 +58,17 @@ find_fd <- function(dag, X, Y, verbose=TRUE, adj_type="minimal") {
   # ---- STEP 1: candidate nodes with criterion 1 ----
   paths <- find_paths(dag, X, Y)
   cand_sets <- subset_paths(paths, X, Y)
-  message(cand_sets)
+  if (is.null(R)) R <- setdiff(nodes, c(X, Y))
+  cand_sets <- Filter(function(Z) {
+    all(I %in% Z) && all(Z %in% R)
+  }, cand_sets)
+  if(!length(cand_sets)) {
+    if (verbose) message("No candidates found.")
+    cat("No valid front-door\n"); return(invisible(NULL))
+  }
+  else {
+    message(paste0("Candidates: ", paste(vapply(cand_sets, fmt_set, ""), collapse = ", ")))
+  }
 
   # ---- STEP 2A: Adjustment A for X->M (use adjustmentSets) ----
   M_with_W <- list(); W_sets_all <- list()
@@ -103,7 +113,7 @@ find_fd <- function(dag, X, Y, verbose=TRUE, adj_type="minimal") {
     }
 
     # Keep only those T for which {X} U T is still a valid adjustment set
-    Tsets <- Filter(function(T) isAdjustmentSet(dag, c(X, T), exposure = M, outcome = Y), Tsets)
+    Tsets <- Filter(function(T) isAdjustmentSet(dag, union(X, T), exposure = M, outcome = Y), Tsets)
 
     # If filtering removed all T but X alone works, record T = {}
     if (length(Tsets) == 0L && isAdjustmentSet(dag, X, exposure = M, outcome = Y)) {
