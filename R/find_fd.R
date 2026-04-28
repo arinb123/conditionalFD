@@ -107,7 +107,8 @@ find_fd <- function(dag, X, Y, verbose=TRUE, adj_type="minimal", I=character(0),
     Ws  <- W_sets_all[[i]]
 
     T_raw  <- adjustmentSets(dag, exposure = M, outcome = Y, type = adj_type)
-    Tsets  <- normalize_sets(T_raw)
+    Tsets <- lapply(T_raw, function(s) union(s, X))
+    Tsets  <- normalize_sets(Tsets)
 
     # If no T proposed at all, accept {} iff X alone is a valid adjustment set:
     if (length(Tsets) == 0L && isAdjustmentSet(dag, X, exposure = M, outcome = Y)) {
@@ -115,7 +116,7 @@ find_fd <- function(dag, X, Y, verbose=TRUE, adj_type="minimal", I=character(0),
     }
 
     # Keep only those T for which {X} U T is still a valid adjustment set
-    Tsets <- Filter(function(T) isAdjustmentSet(dag, union(X, T), exposure = M, outcome = Y), Tsets)
+    Tsets <- Filter(function(T) isAdjustmentSet(dag, T, exposure = M, outcome = Y), Tsets)
 
     # If filtering removed all T but X alone works, record T = {}
     if (length(Tsets) == 0L && isAdjustmentSet(dag, X, exposure = M, outcome = Y)) {
